@@ -133,8 +133,12 @@ class ImageOptimizerTarget implements TargetInterface
         /** @var StorageObject $resource */
         foreach ($collection->getObjects($callback) as $resource) {
             if ($this->needsToBeOptimized($resource)) {
-                $optimizedResource = $this->optimizerService->optimize($resource->getStream(), $resource->getFilename(), $this->options['optimizedCollection'], $this->getOptimizerConfigurationForMediaType($resource->getMediaType()));
-                $this->prepareForPersistence($optimizedResource, $resource->getSha1(), $resource->getFilename());
+                try {
+                    $optimizedResource = $this->optimizerService->optimize($resource->getStream(), $resource->getFilename(), $this->options['optimizedCollection'], $this->getOptimizerConfigurationForMediaType($resource->getMediaType()));
+                    $this->prepareForPersistence($optimizedResource, $resource->getSha1(), $resource->getFilename());
+                } catch (\Exception $exception) {
+                    // Ignore the error and use the original resource
+                }
             }
         }
         $this->realTarget->publishCollection($collection, $callback);
@@ -153,8 +157,12 @@ class ImageOptimizerTarget implements TargetInterface
     public function publishResource(PersistentResource $resource, CollectionInterface $collection)
     {
         if ($this->needsToBeOptimized($resource)) {
-            $optimizedResource = $this->optimizerService->optimize($resource->getStream(), $resource->getFilename(), $this->options['optimizedCollection'], $this->getOptimizerConfigurationForMediaType($resource->getMediaType()));
-            $this->prepareForPersistence($optimizedResource, $resource->getSha1(), $resource->getFilename());
+            try {
+                $optimizedResource = $this->optimizerService->optimize($resource->getStream(), $resource->getFilename(), $this->options['optimizedCollection'], $this->getOptimizerConfigurationForMediaType($resource->getMediaType()));
+                $this->prepareForPersistence($optimizedResource, $resource->getSha1(), $resource->getFilename());
+            } catch (\Exception $exception) {
+                // Ignore the error and use the original resource
+            }
         }
         $this->realTarget->publishResource($resource, $collection);
     }
