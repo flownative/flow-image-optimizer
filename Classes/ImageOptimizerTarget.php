@@ -26,7 +26,6 @@ use Neos\Flow\ResourceManagement\Exception as ResourceManagementException;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\ResourceManagement\ResourceMetaDataInterface;
-use Neos\Flow\ResourceManagement\Storage\StorageObject;
 use Neos\Flow\ResourceManagement\Target\Exception as TargetException;
 use Neos\Flow\ResourceManagement\Target\TargetInterface;
 use Psr\Log\LoggerInterface;
@@ -36,15 +35,9 @@ use Psr\Log\LoggerInterface;
  */
 class ImageOptimizerTarget implements TargetInterface
 {
-    /**
-     * @var string
-     */
-    protected $name;
+    protected string $name;
 
-    /**
-     * @var array
-     */
-    protected $options;
+    protected array $options;
 
     /**
      * @Flow\Inject
@@ -82,41 +75,22 @@ class ImageOptimizerTarget implements TargetInterface
      */
     protected $logger;
 
-    /**
-     * @var TargetInterface
-     */
-    protected $realTarget;
+    protected TargetInterface $realTarget;
 
     /**
      * @var OptimizerConfiguration[]
      */
-    protected $optimizerConfigurations = [];
+    protected array $optimizerConfigurations = [];
 
-    /**
-     * @var object[]
-     */
-    protected $unpersistedObjects = [];
+    protected array $unpersistedObjects = [];
 
-    /**
-     * @var array
-     */
-    protected $boundForRemoval = [];
+    protected array $boundForRemoval = [];
 
-    /**
-     * @param TargetInstanceRegistry $targetInstanceRegistry
-     * @return void
-     */
     public function injectTargetInstanceRegistry(TargetInstanceRegistry $targetInstanceRegistry): void
     {
         $targetInstanceRegistry->register($this);
     }
 
-    /**
-     * Constructor
-     *
-     * @param string $name Name of this target instance, according to the resource settings
-     * @param array $options Options for this target
-     */
     public function __construct(string $name, array $options = [])
     {
         $this->name = $name;
@@ -129,13 +103,10 @@ class ImageOptimizerTarget implements TargetInterface
     /**
      * Publishes the whole collection to this target
      *
-     * @param CollectionInterface $collection The collection to publish
-     * @param callable|null $callback Function called after each resource publishing
      * @return void
      */
     public function publishCollection(CollectionInterface $collection, callable $callback = null)
     {
-        /** @var StorageObject $resource */
         foreach ($collection->getObjects($callback) as $resource) {
             $this->optimizeIfNeeded($resource);
         }
@@ -170,12 +141,6 @@ class ImageOptimizerTarget implements TargetInterface
         }
     }
 
-    /**
-     * @param PersistentResource $optimizedResource
-     * @param string $sha1
-     * @param string $filename
-     * @return void
-     */
     protected function prepareForPersistence(PersistentResource $optimizedResource, string $sha1, string $filename): void
     {
         $this->doctrinePersistence->detach($optimizedResource);
@@ -218,7 +183,6 @@ class ImageOptimizerTarget implements TargetInterface
     }
 
     /**
-     * @param PersistentResource $resource
      * @return string
      * @throws TargetException
      */
@@ -235,10 +199,6 @@ class ImageOptimizerTarget implements TargetInterface
         return $this->realTarget->getPublicPersistentResourceUri($resource);
     }
 
-    /**
-     * @param ResourceMetaDataInterface $resource
-     * @return bool
-     */
     protected function needsToBeOptimized(ResourceMetaDataInterface $resource): bool
     {
         return $this->shouldBeOptimized($resource->getMediaType())
@@ -246,29 +206,16 @@ class ImageOptimizerTarget implements TargetInterface
             && !$this->isOptimized($resource->getSha1(), $resource->getFilename());
     }
 
-    /**
-     * @param string $mediaType
-     * @return bool
-     */
     protected function shouldBeOptimized(string $mediaType): bool
     {
         return ($this->getOptimizerConfigurationForMediaType($mediaType) !== null);
     }
 
-    /**
-     * @param string $mediaType
-     * @return OptimizerConfiguration|null
-     */
     protected function getOptimizerConfigurationForMediaType(string $mediaType): ?OptimizerConfiguration
     {
         return $this->optimizerConfigurations[$mediaType] ?? null;
     }
 
-    /**
-     * @param string $sha1
-     * @param string $filename
-     * @return bool
-     */
     protected function isOptimized(string $sha1, string $filename): bool
     {
         $optimized = $this->getOptimizedBySha1AndFilename($sha1, $filename);
@@ -276,11 +223,6 @@ class ImageOptimizerTarget implements TargetInterface
         return $optimized !== null;
     }
 
-    /**
-     * @param string $sha1
-     * @param string $filename
-     * @return OptimizedResourceRelation|null
-     */
     protected function getOptimizedBySha1AndFilename(string $sha1, string $filename): ?OptimizedResourceRelation
     {
         $originalResourceIdentificationHash = OptimizedResourceRelation::createOriginalResourceIdentificationHash($sha1, $filename);
@@ -288,10 +230,6 @@ class ImageOptimizerTarget implements TargetInterface
         return $this->optimizedResourceRelationRepository->findByIdentifier($originalResourceIdentificationHash);
     }
 
-    /**
-     * @param array $rawOptions
-     * @return array
-     */
     protected function prepareOptimizerConfigurations(array $rawOptions): array
     {
         $result = [];
@@ -305,9 +243,6 @@ class ImageOptimizerTarget implements TargetInterface
         return $result;
     }
 
-    /**
-     * @return void
-     */
     public function persist(): void
     {
         foreach ($this->unpersistedObjects as $unpersistedObject) {

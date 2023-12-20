@@ -20,6 +20,8 @@ use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Flow\Utility\Algorithms;
 use Neos\Flow\Utility\Environment;
+use Neos\Flow\Utility\Exception;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 
 /**
@@ -84,9 +86,8 @@ class OptimizerService
     }
 
     /**
-     * @param string $filename
-     * @param string $extension
-     * @return string
+     * @throws Exception
+     * @throws FilesException
      */
     protected function generateTemporaryPathAndFilename(string $filename, string $extension): string
     {

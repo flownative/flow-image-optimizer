@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Flownative\ImageOptimizer\Doctrine;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\ORMException;
 use Flownative\ImageOptimizer\Domain\Model\OptimizedResourceRelation;
 use Flownative\ImageOptimizer\Domain\Repository\OptimizedResourceRelationRepository;
 use Neos\Flow\Annotations as Flow;
@@ -21,14 +22,11 @@ class ResourceRemovalListener
      */
     protected $optimizedResourceRelationRepository;
 
-    /**
-     * @var array
-     */
-    protected $seenOptimizedResourceRelations = [];
+    protected array $seenOptimizedResourceRelations = [];
 
     /**
-     * @param LifecycleEventArgs $event
      * @throws IllegalObjectTypeException
+     * @throws ORMException
      */
     public function preRemove(LifecycleEventArgs $event): void
     {

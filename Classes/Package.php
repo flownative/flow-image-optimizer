@@ -27,7 +27,6 @@ class Package extends \Neos\Flow\Package\Package
      * Resources are published using postPersist, so any new resources that are created in this target are
      * created after flushing changes. Thus we need to persist them here on our own.
      *
-     * @param Bootstrap $bootstrap The current bootstrap
      * @return void
      * @throws \Neos\Flow\Exception
      */

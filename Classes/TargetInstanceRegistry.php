@@ -23,12 +23,8 @@ class TargetInstanceRegistry
     /**
      * @var ImageOptimizerTarget[]
      */
-    protected $targetInstances = [];
+    protected array $targetInstances = [];
 
-    /**
-     * @param ImageOptimizerTarget $target
-     * @return void
-     */
     public function register(ImageOptimizerTarget $target): void
     {
         $this->targetInstances[] = $target;
