@@ -13,11 +13,13 @@ namespace Flownative\ImageOptimizer\Domain\Repository;
  * source code.
  */
 
+use Flownative\ImageOptimizer\Domain\Model\OptimizedResourceRelation;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Doctrine\Repository;
 
 /**
  * @Flow\Scope("singleton")
+ * @method OptimizedResourceRelation findByIdentifier(string $identifier)
  */
 class OptimizedResourceRelationRepository extends Repository
 {

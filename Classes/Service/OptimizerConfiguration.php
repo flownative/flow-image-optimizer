@@ -23,20 +23,11 @@ use Neos\Flow\Annotations as Flow;
  */
 class OptimizerConfiguration
 {
-    /**
-     * @var string
-     */
-    protected $binaryPath = '';
+    protected string $binaryPath;
 
-    /**
-     * @var string
-     */
-    protected $argumentsExpression = '';
+    protected string $argumentsExpression;
 
-    /**
-     * @var string
-     */
-    protected $outFileExtension;
+    protected string $outFileExtension;
 
     /**
      * @Flow\Inject(lazy=false)
@@ -45,10 +36,8 @@ class OptimizerConfiguration
     protected $eelEvaluator;
 
     /**
-     * OptimizerConfiguration constructor.
-     *
      * @param string $binaryPath Path to the binary that should do the optimization of the resource.
-     * @param string $argumentsExpression An EEL expression to build the argumetns for the transformation
+     * @param string $argumentsExpression An EEL expression to build the arguments for the transformation
      * @param string $outFileExtension Used to overwrite the outfile extension if needed. (Eg. if the optimizer transforms from JPEG to PNG).
      */
     public function __construct(string $binaryPath, string $argumentsExpression, string $outFileExtension)
@@ -58,32 +47,22 @@ class OptimizerConfiguration
         $this->outFileExtension = $outFileExtension;
     }
 
-    /**
-     * @return string
-     */
     public function getBinaryPath(): string
     {
         return $this->binaryPath;
     }
 
-    /**
-     * @return string
-     */
     public function getArgumentsExpression(): string
     {
         return $this->argumentsExpression;
     }
 
-    /**
-     * @return string
-     */
     public function getOutFileExtension(): string
     {
         return $this->outFileExtension;
     }
 
     /**
-     * @param array $contextVariables
      * @return mixed
      * @throws EelException
      */
@@ -95,8 +74,6 @@ class OptimizerConfiguration
     /**
      * The result should be directly callable via "exec" for example.
      *
-     * @param array $contextVariables
-     * @return string
      * @throws EelException
      */
     public function getPreparedCommandString(array $contextVariables): string
